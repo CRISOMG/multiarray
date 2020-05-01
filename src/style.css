@@ -8,14 +8,15 @@ body {
 .matrix {
   display: flex;
   flex-direction: column;
+  border: 2px solid black;
 }
 .row {
   display: flex;
   flex-direction: row;
 }
 .square {
-  width: 30px;
-  height: 30px;
+  width: 90px;
+  height: 90px;
   border: 2px solid black;
 }
 .red {

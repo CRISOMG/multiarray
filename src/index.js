@@ -1,9 +1,10 @@
 const $matriz = document.getElementById('matriz');
 
-const array = [
-  [1, 0, 1],
-  [0, 1, 0],
-  [1, 0, 1],
+const matriz = [
+  [1, 0, 1, 0],
+  [0, 1, 0, 0],
+  [1, 0, 1, 0],
+  [1, 0, 1, 0],
 ];
 
 function createSquare(color, id) {
@@ -19,14 +20,15 @@ function createRow() {
   return $row;
 }
 
-let squareId = 1;
-
-function drawMatriz(array) {
-  for (let index = 0; index < array.length; index++) {
-    const row = array[index];
-
+//se recorre la matriz de forma 'vertical y horizontal','longitudinal y en profundidad'...
+function drawMatriz(matriz) {
+  let squareId = 1;
+//se recorre la 'longitud de la matriz' o la 'cantidad de filas de la matriz'
+  for (let index = 0; index < matriz.length; index++) {
+    const row = matriz[index];
     const $rowElement = createRow();
 
+// se recorre la profundidad del 'indice actual del array' o 'fila de la matriz'
     row.forEach((square) => {
       if (square === 1) {
         $rowElement.append(createSquare('red', squareId));
@@ -39,7 +41,7 @@ function drawMatriz(array) {
 
     $matriz.append($rowElement);
   }
-  console.log(array);
+  console.log(matriz);
 }
 
-drawMatriz(array);
+drawMatriz(matriz);
