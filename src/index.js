@@ -1,74 +1,45 @@
-const app = document.getElementById('app')
+const $matriz = document.getElementById('matriz');
 
 const array = [
-    [1, 0, 0, 0],
-    [0, 1, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 1, 0],
-]
+  [1, 0, 1],
+  [0, 1, 0],
+  [1, 0, 1],
+];
 
-
-function createSquare() {
-
-    const square = document.createElement('div')
-    square.setAttribute('class', 'square')
-    square.setAttribute('id', 'square')
-
-    return square
-
+function createSquare(color, id) {
+  const $square = document.createElement('div');
+  $square.setAttribute('class', `square ${color}`);
+  $square.setAttribute('id', `square-${id}`);
+  return $square;
 }
 
-function buildArrayColor(arrayColor) {
-
-    const row = document.createElement('div')
-    row.setAttribute('class', 'row')
-
-    arrayColor.forEach(color => {
-
-        const s = createSquare()
-
-        if (color === 'red') {
-            s.classList.add('red')
-        } else if (color === 'white') {
-            s.classList.add('white')
-        }
-
-
-        row.append(s)
-    })
-
-    app.append(row)
-
+function createRow() {
+  const $row = document.createElement('div');
+  $row.setAttribute('class', 'row');
+  return $row;
 }
 
-function analitycArray(array) {
-    let length = null;
-    let deep = null;
-    // array.forEach(square => {
-    //     console.log(square)
-    //     square.forEach(item => console.count(item))
-    // });
-    for (let index = 0; index < array.length; index++) {
-        const row = array[index];
+let squareId = 1;
 
+function drawMatriz(array) {
+  for (let index = 0; index < array.length; index++) {
+    const row = array[index];
 
-        const arrayColor = []
+    const $rowElement = createRow();
 
-        row.forEach(square => {
+    row.forEach((square) => {
+      if (square === 1) {
+        $rowElement.append(createSquare('red', squareId));
+        squareId++;
+      } else if (square === 0) {
+        $rowElement.append(createSquare('white', squareId));
+        squareId++;
+      }
+    });
 
-            if (square === 0) {
-                arrayColor.push('white')
-            } else if (square === 1) {
-                arrayColor.push('red')
-            }
-
-        });
-
-        console.log(arrayColor);
-        buildArrayColor(arrayColor)
-    }
+    $matriz.append($rowElement);
+  }
+  console.log(array);
 }
 
-
-analitycArray(array)
-
+drawMatriz(array);
