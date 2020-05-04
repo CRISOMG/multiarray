@@ -1,17 +1,29 @@
-const $matriz = document.getElementById('matriz');
+function generateRandomHexCode() {
+  let hexCode = '#';
+
+  while (hexCode.length < 7) {
+    hexCode += Math.round(Math.random() * 15).toString(16);
+  }
+
+  return hexCode;
+}
 
 const matriz = [
-  [1, 0, 1, 0],
-  [0, 1, 0, 0],
-  [1, 0, 1, 0],
-  [1, 0, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 0, 1, 1, 1, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
-
-function createSquare(color, id) {
-  const $square = document.createElement('div');
-  $square.setAttribute('class', `square ${color}`);
-  $square.setAttribute('id', `square-${id}`);
-  return $square;
+function createMatriz() {
+  const $matriz = document.createElement('section');
+  $matriz.setAttribute('class', 'matriz');
+  $matriz.setAttribute('id', 'matriz');
+  return $matriz;
 }
 
 function createRow() {
@@ -20,28 +32,95 @@ function createRow() {
   return $row;
 }
 
-//se recorre la matriz de forma 'vertical y horizontal','longitudinal y en profundidad'...
-function drawMatriz(matriz) {
-  let squareId = 1;
-//se recorre la 'longitud de la matriz' o la 'cantidad de filas de la matriz'
-  for (let index = 0; index < matriz.length; index++) {
-    const row = matriz[index];
-    const $rowElement = createRow();
+function createSquare(squareId, rowId, color = 'white') {
+  const $square = document.createElement('div');
+  $square.setAttribute('class', `square`);
+  $square.setAttribute('id', `square-${squareId}`);
+  $square.style.backgroundColor = color;
 
-// se recorre la profundidad del 'indice actual del array' o 'fila de la matriz'
-    row.forEach((square) => {
-      if (square === 1) {
-        $rowElement.append(createSquare('red', squareId));
+  $square.onclick = (event) => {
+    console.log(rowId, squareId);
+
+    matriz[rowId][squareId]
+      ? (matriz[rowId][squareId] = 0)
+      : (matriz[rowId][squareId] = 1);
+
+    drawMatriz(matriz);
+  };
+
+  return $square;
+}
+
+function analyser(
+  currentElementMatriz,
+  currentElementRow,
+  indexRow,
+  indexSquare,
+  rowId,
+  squareId
+) {
+  const aboveSquare =
+    !!matriz[indexRow - 1] && matriz[indexRow - 1][indexSquare];
+  const previousSquare = !!matriz[indexRow][indexSquare - 1];
+
+  if (aboveSquare) {
+    const color =
+      currentElementMatriz.children[indexRow - 1].children[indexSquare].style
+        .backgroundColor;
+    const squareElement = createSquare(squareId, rowId, color);
+    return squareElement;
+  }
+  if (previousSquare) {
+    const color =
+      currentElementRow.children[indexSquare - 1].style.backgroundColor;
+    const squareElement = createSquare(squareId, rowId, color);
+    return squareElement;
+  }
+
+  const squareElement = createSquare(squareId, rowId);
+  squareElement.style.backgroundColor = generateRandomHexCode();
+
+  return squareElement;
+}
+
+function drawMatriz(matriz) {
+  document.body.innerHTML = '';
+  const currentElementMatriz = createMatriz();
+
+  let rowId = 0;
+  matriz.forEach((row, indexRow, matriz) => {
+    const currentElementRow = createRow();
+
+    let squareId = 0;
+    row.forEach((square, indexSquare, currentRow) => {
+      if (!square) {
+        currentElementRow.append(createSquare(squareId, rowId));
         squareId++;
-      } else if (square === 0) {
-        $rowElement.append(createSquare('white', squareId));
+      }
+      if (square) {
+        const $square = analyser(
+          currentElementMatriz,
+          currentElementRow,
+          indexRow,
+          indexSquare,
+          rowId,
+          squareId
+        );
+        currentElementRow.append($square);
         squareId++;
       }
     });
 
-    $matriz.append($rowElement);
-  }
-  console.log(matriz);
+    currentElementMatriz.append(currentElementRow);
+    rowId++;
+  });
+  document.body.appendChild(currentElementMatriz);
 }
 
 drawMatriz(matriz);
+
+document.addEventListener('keydown', (ev) => {
+  if (ev.keyCode == 13) {
+    drawMatriz(matriz);
+  }
+});
