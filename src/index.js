@@ -2,23 +2,44 @@ function generateRandomHexCode() {
   let hexCode = '#';
 
   while (hexCode.length < 7) {
-    hexCode += Math.round(Math.random() * 15).toString(16);
+    hexCode += Math.ceil(Math.random() * 12).toString(16);
   }
 
   return hexCode;
 }
 
+const generateMatrix = (size) => {
+  return Array.from({ length: size }, () => new Array(size).fill(0));
+};
+
+// const matriz = generateMatrix(9);
+
 const matriz = [
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 0, 1, 1, 1, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 0],
+  [1, 1, 1],
+  [0, 1, 0],
 ];
+
+// const matriz = [
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0],
+// ];
+
+// const matriz = [
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 0, 1, 1, 1, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+// ];
+
 function createMatriz() {
   const $matriz = document.createElement('section');
   $matriz.setAttribute('class', 'matriz');
@@ -32,20 +53,20 @@ function createRow() {
   return $row;
 }
 
-function createSquare(squareId, rowId, color = 'white') {
+function createSquare(squareId, rowId, color) {
+  const COLOR = color;
   const $square = document.createElement('div');
   $square.setAttribute('class', `square`);
-  $square.setAttribute('id', `square-${squareId}`);
-  $square.style.backgroundColor = color;
+  $square.style.backgroundColor = COLOR;
 
   $square.onclick = (event) => {
-    console.log(rowId, squareId);
+    console.log(rowId, squareId, COLOR);
 
-    matriz[rowId][squareId]
-      ? (matriz[rowId][squareId] = 0)
-      : (matriz[rowId][squareId] = 1);
+    // matriz[rowId][squareId]
+    //   ? (matriz[rowId][squareId] = 0)
+    //   : (matriz[rowId][squareId] = 1);
 
-    drawMatriz(matriz);
+    // drawMatriz(matriz);
   };
 
   return $square;
@@ -55,9 +76,7 @@ function analyser(
   currentElementMatriz,
   currentElementRow,
   indexRow,
-  indexSquare,
-  rowId,
-  squareId
+  indexSquare
 ) {
   const aboveSquare =
     !!matriz[indexRow - 1] && matriz[indexRow - 1][indexSquare];
@@ -67,17 +86,17 @@ function analyser(
     const color =
       currentElementMatriz.children[indexRow - 1].children[indexSquare].style
         .backgroundColor;
-    const squareElement = createSquare(squareId, rowId, color);
+    const squareElement = createSquare(indexSquare, indexRow, color);
     return squareElement;
   }
   if (previousSquare) {
     const color =
       currentElementRow.children[indexSquare - 1].style.backgroundColor;
-    const squareElement = createSquare(squareId, rowId, color);
+    const squareElement = createSquare(indexSquare, indexRow, color);
     return squareElement;
   }
 
-  const squareElement = createSquare(squareId, rowId);
+  const squareElement = createSquare(indexSquare, indexRow);
   squareElement.style.backgroundColor = generateRandomHexCode();
 
   return squareElement;
@@ -87,40 +106,40 @@ function drawMatriz(matriz) {
   document.body.innerHTML = '';
   const currentElementMatriz = createMatriz();
 
-  let rowId = 0;
+  let n = 0;
   matriz.forEach((row, indexRow, matriz) => {
     const currentElementRow = createRow();
 
-    let squareId = 0;
     row.forEach((square, indexSquare, currentRow) => {
+      console.log(n);
+      n++;
+
       if (!square) {
-        currentElementRow.append(createSquare(squareId, rowId));
-        squareId++;
+        currentElementRow.append(createSquare(indexSquare, indexRow, 'white'));
       }
       if (square) {
         const $square = analyser(
           currentElementMatriz,
           currentElementRow,
           indexRow,
-          indexSquare,
-          rowId,
-          squareId
+          indexSquare
         );
         currentElementRow.append($square);
-        squareId++;
       }
     });
 
     currentElementMatriz.append(currentElementRow);
-    rowId++;
   });
   document.body.appendChild(currentElementMatriz);
 }
 
 drawMatriz(matriz);
 
-document.addEventListener('keydown', (ev) => {
-  if (ev.keyCode == 13) {
-    drawMatriz(matriz);
-  }
-});
+// document.addEventListener('keydown', (ev) => {
+//   if (ev.key == 'Enter') {
+//     drawMatriz(matriz);
+//   }
+// });
+// document.addEventListener('click', (ev) => {
+//   drawMatriz(matriz);
+// });
